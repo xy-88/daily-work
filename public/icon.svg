@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#F4EFE6"/>
+  <rect x="0" y="0" width="512" height="512" fill="none"/>
+  <!-- ledger binding stripes -->
+  <g transform="translate(156,128)">
+    <rect x="0"   y="0" width="40" height="256" rx="3" fill="#9B2C2C"/>
+    <rect x="64"  y="0" width="40" height="256" rx="3" fill="#1C1917"/>
+    <rect x="128" y="0" width="40" height="256" rx="3" fill="#B8893E"/>
+    <rect x="192" y="0" width="40" height="256" rx="3" fill="#2F5D3A"/>
+  </g>
+  <!-- baseline -->
+  <rect x="156" y="404" width="232" height="6" fill="#1C1917" opacity="0.85"/>
+</svg>
