@@ -117,21 +117,39 @@ export function makeToken(): string {
   return Array.from(bytes).map((b) => b.toString(16).padStart(2, '0')).join('')
 }
 
-/** 首次初始化：写入默认类目 */
+/** 首次初始化：写入默认类目；清理旧版模拟数据 */
 export async function ensureSeed(): Promise<void> {
-  const seeded = await getMeta<boolean>('seeded')
+  const seeded = await getMeta<boolean>('seeded_v2')
   if (seeded) return
-  await bulkPutCategories(DEFAULT_CATEGORIES)
-  const account: AccountMeta = {
-    id: `acc_${Date.now().toString(36)}`,
-    name: '我的账簿',
-    syncToken: makeToken(),
-    lastSyncAt: 0,
-    createdAt: Date.now(),
+  // 清理旧版模拟交易（id 以 s 开头），保留用户自建数据
+  const oldTxs = await listTx()
+  const sampleIds = oldTxs.filter((t) => t.id.startsWith('s')).map((t) => t.id)
+  if (sampleIds.length) {
+    const db = await openDB()
+    await new Promise<void>((resolve, reject) => {
+      const t = db.transaction('transactions', 'readwrite')
+      const s = t.objectStore('transactions')
+      for (const id of sampleIds) s.delete(id)
+      t.oncomplete = () => resolve()
+      t.onerror = () => reject(t.error)
+    })
   }
-  await setMeta('account', account)
-  await setMeta('prefs', { currency: '¥' } as Prefs)
-  await setMeta('seeded', true)
+  await bulkPutCategories(DEFAULT_CATEGORIES)
+  const account = await getMeta<AccountMeta>('account')
+  if (!account) {
+    await setMeta('account', {
+      id: `acc_${Date.now().toString(36)}`,
+      name: '我的账簿',
+      syncToken: makeToken(),
+      lastSyncAt: 0,
+      createdAt: Date.now(),
+    })
+  }
+  const prefs = await getMeta<Prefs>('prefs')
+  if (!prefs) {
+    await setMeta('prefs', { currency: '¥' } as Prefs)
+  }
+  await setMeta('seeded_v2', true)
 }
 
 export async function clearAll(): Promise<void> {
