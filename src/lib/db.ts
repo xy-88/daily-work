@@ -1,5 +1,5 @@
 import type { AccountMeta, Category, Prefs, Tx } from './types'
-import { DEFAULT_CATEGORIES, SAMPLE_TXS } from './seed'
+import { DEFAULT_CATEGORIES } from './seed'
 
 const DB_NAME = 'ledger-db'
 const DB_VERSION = 2
@@ -117,12 +117,11 @@ export function makeToken(): string {
   return Array.from(bytes).map((b) => b.toString(16).padStart(2, '0')).join('')
 }
 
-/** 首次初始化：写入默认类目与示例数据 */
+/** 首次初始化：写入默认类目 */
 export async function ensureSeed(): Promise<void> {
   const seeded = await getMeta<boolean>('seeded')
   if (seeded) return
   await bulkPutCategories(DEFAULT_CATEGORIES)
-  await bulkPutTx(SAMPLE_TXS)
   const account: AccountMeta = {
     id: `acc_${Date.now().toString(36)}`,
     name: '我的账簿',
