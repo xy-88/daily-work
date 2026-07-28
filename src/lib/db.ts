@@ -119,8 +119,14 @@ export function makeToken(): string {
 
 /** 首次初始化：写入默认类目；清理旧版模拟数据 */
 export async function ensureSeed(): Promise<void> {
+  // 始终确保默认类目存在（防止因迁移或异常导致类目丢失）
+  const existing = await listCategories()
+  const missing = DEFAULT_CATEGORIES.filter((dc) => !existing.some((ec) => ec.id === dc.id))
+  if (missing.length) await bulkPutCategories(missing)
+
   const seeded = await getMeta<boolean>('seeded_v2')
   if (seeded) return
+
   // 清理旧版模拟交易（id 以 s 开头），保留用户自建数据
   const oldTxs = await listTx()
   const sampleIds = oldTxs.filter((t) => t.id.startsWith('s')).map((t) => t.id)
@@ -134,7 +140,7 @@ export async function ensureSeed(): Promise<void> {
       t.onerror = () => reject(t.error)
     })
   }
-  await bulkPutCategories(DEFAULT_CATEGORIES)
+
   const account = await getMeta<AccountMeta>('account')
   if (!account) {
     await setMeta('account', {
