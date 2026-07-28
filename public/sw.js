@@ -1,5 +1,5 @@
 // 账簿 Ledger — 离线缓存 Service Worker（运行时 cache-first）
-const CACHE = 'ledger-v1';
+const CACHE = 'ledger-v2';
 
 self.addEventListener('install', () => {
   self.skipWaiting();
