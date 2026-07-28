@@ -7,6 +7,7 @@ import Entries from '@/pages/Entries'
 import Import from '@/pages/Import'
 import Analytics from '@/pages/Analytics'
 import Settings from '@/pages/Settings'
+import StockDashboard from '@/pages/StockDashboard'
 
 export default function App() {
   const ready = useStore((s) => s.ready)
@@ -39,13 +40,24 @@ export default function App() {
   return (
     <Routes>
       <Route element={<Layout />}>
-        <Route path="/" element={<Overview />} />
-        <Route path="/entries" element={<Entries />} />
-        <Route path="/import" element={<Import />} />
-        <Route path="/analytics" element={<Analytics />} />
-        <Route path="/settings" element={<Settings />} />
+        {/* Ledger module */}
+        <Route path="/ledger" element={<Overview />} />
+        <Route path="/ledger/entries" element={<Entries />} />
+        <Route path="/ledger/import" element={<Import />} />
+        <Route path="/ledger/analytics" element={<Analytics />} />
+        <Route path="/ledger/settings" element={<Settings />} />
+
+        {/* Stock module */}
+        <Route path="/stock" element={<StockDashboard />} />
       </Route>
-      <Route path="*" element={<Navigate to="/" replace />} />
+
+      {/* Redirects */}
+      <Route path="/" element={<Navigate to="/ledger" replace />} />
+      <Route path="/entries" element={<Navigate to="/ledger/entries" replace />} />
+      <Route path="/import" element={<Navigate to="/ledger/import" replace />} />
+      <Route path="/analytics" element={<Navigate to="/ledger/analytics" replace />} />
+      <Route path="/settings" element={<Navigate to="/ledger/settings" replace />} />
+      <Route path="*" element={<Navigate to="/ledger" replace />} />
     </Routes>
   )
 }

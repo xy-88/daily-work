@@ -34,7 +34,7 @@ export default function Overview() {
         title="财务概览"
         subtitle={`${monthLabel(monthKeyStr)} · 共 ${summary.count} 笔记录`}
         action={
-          <Link to="/import" className="btn-primary">
+          <Link to="/ledger/import" className="btn-primary">
             <Plus className="w-4 h-4" strokeWidth={2} /> 导入账单
           </Link>
         }
@@ -103,7 +103,7 @@ export default function Overview() {
               <div className="py-10 text-center text-sm text-ink-faint">暂无记录，去导入账单开始记账吧</div>
             )}
           </div>
-          <Link to="/entries" className="mt-4 inline-flex items-center gap-1 text-xs text-ink-muted hover:text-ink font-display italic">
+          <Link to="/ledger/entries" className="mt-4 inline-flex items-center gap-1 text-xs text-ink-muted hover:text-ink font-display italic">
             查看全部流水 →
           </Link>
         </div>
