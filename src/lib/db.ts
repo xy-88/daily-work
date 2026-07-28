@@ -162,7 +162,18 @@ export async function clearAll(): Promise<void> {
   const db = await openDB()
   await new Promise<void>((resolve, reject) => {
     const t = db.transaction([...STORES], 'readwrite')
-    for (const name of STORES) t.objectStore(name).clear()
+    // 清空交易和元数据
+    t.objectStore('transactions').clear()
+    t.objectStore('meta').clear()
+    // 类目：只删除非默认类目，保留 DEFAULT_CATEGORIES
+    const catStore = t.objectStore('categories')
+    const req = catStore.getAll()
+    req.onsuccess = () => {
+      const defaultIds = new Set(DEFAULT_CATEGORIES.map((c) => c.id))
+      for (const cat of req.result as Category[]) {
+        if (!defaultIds.has(cat.id)) catStore.delete(cat.id)
+      }
+    }
     t.oncomplete = () => resolve()
     t.onerror = () => reject(t.error)
   })
