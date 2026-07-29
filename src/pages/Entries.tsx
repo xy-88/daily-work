@@ -3,7 +3,7 @@ import { Search, Plus, Filter } from 'lucide-react'
 import { useStore } from '@/store/useStore'
 import { PageHeader, SectionLabel, Amount } from '@/components/ui'
 import { TxItem } from '@/components/TxItem'
-import { formatDateFull } from '@/lib/format'
+import { formatDateFull, todayStr, nowTimeStr } from '@/lib/format'
 import type { Platform, TxType } from '@/lib/types'
 
 export default function Entries() {
@@ -23,6 +23,8 @@ export default function Entries() {
   const [aAmount, setAAmount] = useState('')
   const [aCounterparty, setACounterparty] = useState('')
   const [aCat, setACat] = useState('')
+  const [aDate, setADate] = useState(todayStr)
+  const [aTime, setATime] = useState(nowTimeStr)
 
   const filtered = useMemo(() => {
     return txs.filter((t) => {
@@ -54,12 +56,16 @@ export default function Entries() {
       categoryId: aCat || undefined,
       platform: 'manual',
       method: '手动',
+      date: aDate || undefined,
+      time: aTime || undefined,
     })
     setAdding(false)
     setAAmount('')
     setACounterparty('')
     setACat('')
     setAType('expense')
+    setADate(todayStr())
+    setATime(nowTimeStr())
   }
 
   return (
@@ -104,6 +110,16 @@ export default function Entries() {
               </select>
             </div>
             <button className="btn-primary" onClick={submitAdd}>记一笔</button>
+          </div>
+          <div className="grid grid-cols-2 gap-3 mt-3">
+            <div>
+              <label className="text-[10px] uppercase tracking-widest text-ink-faint">日期</label>
+              <input className="field mt-1 num" type="date" value={aDate} onChange={(e) => setADate(e.target.value)} />
+            </div>
+            <div>
+              <label className="text-[10px] uppercase tracking-widest text-ink-faint">时间</label>
+              <input className="field mt-1 num" type="time" value={aTime} onChange={(e) => setATime(e.target.value)} />
+            </div>
           </div>
         </div>
       )}
